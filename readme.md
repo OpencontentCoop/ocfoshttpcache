@@ -47,4 +47,6 @@ ed è possibile utilizzare i response tag per un controllo più accurato delle d
 
 L'handler di `StaticCache` considera i valori di `site.ini [ContentSettings]CacheThreshold` per calcolare se svuotare o meno tutta la cache.
 
-Per invalidare selettivamente la cache di Varnish è disponibile il modulo `varnish/main`
+Per invalidare selettivamente la cache di Varnish è disponibile il modulo `varnish/main` (todo)
+
+Per l'invalidamento globale è previsto un header custom `X-Instance` da configurare a livello di VirtualHost (todo documentare)
