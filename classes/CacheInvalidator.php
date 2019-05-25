@@ -6,6 +6,7 @@ use FOS\HttpCache\CacheInvalidator as FosCacheInvalidator;
 use FOS\HttpCache\ProxyClient;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\EventListener\LogListener;
+use FOS\HttpCache\Exception\ExceptionCollection;
 
 
 class CacheInvalidator
@@ -17,7 +18,7 @@ class CacheInvalidator
     private function __construct()
     {
         $servers = $this->getVarnishServers();
-        $baseUri = '';
+        $baseUri = \eZINI::instance()->variable('SiteSettings', 'SiteURL');
 
         (new Logger())->debug('Varnish servers: ' . implode(', ', $servers));
 
@@ -64,8 +65,25 @@ class CacheInvalidator
     {
         if (self::$instance === null) {
             self::$instance = new CacheInvalidator();
+            \eZExecution::addCleanupHandler(array('Opencontent\FosHttpCache\CacheInvalidator', 'flush'));
         }
 
         return self::$instance->cacheInvalidator;
+    }
+
+    public static function flush()
+    {
+        try {
+            if (CacheInvalidator::instance()->flush() > 0) {
+                (new Logger())->debug('Flush invalidations');
+            }
+        } catch (ExceptionCollection $exceptions) {
+            /** @var \Exception $exception */
+            foreach ($exceptions as $exception) {
+                (new Logger())->error($exception->getMessage());
+            }
+        } catch (\Exception $exception) {
+            (new Logger())->error($exception->getMessage());
+        }
     }
 }

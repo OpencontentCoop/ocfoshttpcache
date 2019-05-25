@@ -39,14 +39,16 @@ Listeners[]=content/pre_rendering@Opencontent\FosHttpCache\CacheListener::onCont
  
 ```
 
-Con questa configurazione è opportuno disattivare la `StaticCache` 
-ed è possibile utilizzare i response tag per un controllo più accurato delle dinamiche di invalidamento  
+Con questa configurazione è possibile utilizzare i response tag per un controllo più accurato delle dinamiche di invalidamento  
 
 
 ## Invalidamento della cache di Varnish
 
-L'handler di `StaticCache` considera i valori di `site.ini [ContentSettings]CacheThreshold` per calcolare se svuotare o meno tutta la cache.
-
 Per invalidare selettivamente la cache di Varnish è disponibile il modulo `varnish/main` (todo)
 
 Per l'invalidamento globale è previsto un header custom `X-Instance` da configurare a livello di VirtualHost (todo documentare)
+
+
+## Note
+
+L'handler di `StaticCache` considera i valori di `site.ini [ContentSettings]CacheThreshold` per calcolare se svuotare o meno tutta la cache.

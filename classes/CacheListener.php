@@ -20,7 +20,7 @@ class CacheListener
      */
     public static function onContentView($nodeID, \eZINI $siteINI)
     {
-        header('X-Location-Id: ' . (int)$nodeID);
+        ResponseTagger::instance()->addTags(["node-{$nodeID}"]);
 
         return $nodeID;
     }
@@ -34,19 +34,8 @@ class CacheListener
         $tagList = \ezpEvent::getInstance()->filter('ocfoshttpcache/invalidate_tag_all', $tagList);
 
         if (!empty($tagList)) {
-            try {
-                CacheInvalidator::instance()
-                    ->invalidateTags($tagList)
-                    ->flush();
-                (new Logger())->debug('Clear all content cache');
-            } catch (ExceptionCollection $exceptions) {
-                /** @var \Exception $exception */
-                foreach ($exceptions as $exception) {
-                    (new Logger())->error($exception->getMessage());
-                }
-            } catch (\Exception $exception) {
-                (new Logger())->error($exception->getMessage());
-            }
+            (new Logger())->debug('Clear all content cache');
+            CacheInvalidator::instance()->invalidateTags($tagList);
         }
     }
 
@@ -63,20 +52,11 @@ class CacheListener
         $tagList = \ezpEvent::getInstance()->filter('ocfoshttpcache/invalidate_tag_node_list', $tagList, $nodeIdList);
 
         if (!empty($tagList)) {
-            try {
-                CacheInvalidator::instance()
-                    ->invalidateTags($tagList)
-                    ->flush();
-                (new Logger())->debug('Clear content tag list: ' . implode(', ', $tagList));
-            } catch (ExceptionCollection $exceptions) {
-                /** @var \Exception $exception */
-                foreach ($exceptions as $exception) {
-                    (new Logger())->error($exception->getMessage());
-                }
-            } catch (\Exception $exception) {
-                (new Logger())->error($exception->getMessage());
-            }
+            (new Logger())->debug('Clear content tag list: ' . implode(', ', $tagList));
+            CacheInvalidator::instance()->invalidateTags($tagList);
         }
+
+        return $nodeIdList;
     }
 
     public static function onContentPreRendering(\eZContentObjectTreeNode $node, \eZTemplate $tpl, $viewMode)
@@ -86,6 +66,7 @@ class CacheListener
 
         $tagList = [
             'content-object',
+            'view-' . $viewMode,
             'object-' . $node->object()->attribute('id'),
             'class-' . $node->object()->attribute('contentclass_id'),
             'node-' . $node->attribute('node_id'),
@@ -112,7 +93,7 @@ class CacheListener
         $responseTagger = ResponseTagger::instance();
 
         if ($responseTagger->hasTags()) {
-            (new Logger())->debug('Add content cache tags: ' . $responseTagger->getTagsHeaderValue());
+            (new Logger())->debug('Add cache tags headers: ' . $responseTagger->getTagsHeaderValue());
             header(sprintf('%s: %s',
                 $responseTagger->getTagsHeaderName(),
                 $responseTagger->getTagsHeaderValue()
