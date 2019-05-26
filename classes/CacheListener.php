@@ -2,7 +2,7 @@
 
 namespace Opencontent\FosHttpCache;
 
-use FOS\HttpCache\Exception\ExceptionCollection;
+use FOS\HttpCache\ProxyClient\Varnish;
 
 class CacheListener
 {
@@ -27,16 +27,13 @@ class CacheListener
 
     public static function onContentCacheAll()
     {
-        $tagList = [];
-        if (!self::hasStaticCache()) {
-            $tagList = ['content-object'];
-        }
-        $tagList = \ezpEvent::getInstance()->filter('ocfoshttpcache/invalidate_tag_all', $tagList);
+        $tagList = \ezpEvent::getInstance()->filter('ocfoshttpcache/invalidate_tag_all', []);
 
         if (!empty($tagList)) {
-            (new Logger())->debug('Clear all content cache');
             CacheInvalidator::instance()->invalidateTags($tagList);
         }
+        (new Logger())->debug('Clear all content cache');
+        CacheInvalidator::instance()->invalidateRegex(Varnish::REGEX_MATCH_ALL);
     }
 
     public static function onContentCache($nodeIdList)
@@ -65,7 +62,6 @@ class CacheListener
         \eZDebug::writeNotice("Force set cache_ttl 0", __METHOD__);
 
         $tagList = [
-            'content-object',
             'view-' . $viewMode,
             'object-' . $node->object()->attribute('id'),
             'class-' . $node->object()->attribute('contentclass_id'),

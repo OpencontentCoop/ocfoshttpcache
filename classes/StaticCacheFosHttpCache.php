@@ -2,7 +2,7 @@
 
 namespace Opencontent\FosHttpCache;
 
-use FOS\HttpCache\Exception\ExceptionCollection;
+use FOS\HttpCache\ProxyClient\Varnish;
 
 class StaticCache implements \ezpStaticCache
 {
@@ -62,8 +62,8 @@ class StaticCache implements \ezpStaticCache
 
     public function generateCache($force = false, $quiet = false, $cli = false, $delay = true)
     {
-        CacheInvalidator::instance()
-            ->invalidate(['X-Instance' => ResponseTagger::getCurrentInstanceIdentifier()]);
+        (new Logger())->info('Clear all cache');
+        CacheInvalidator::instance()->invalidateRegex(Varnish::REGEX_MATCH_ALL);
     }
 
     public function cacheURL($url, $nodeID = false, $skipExisting = false, $delay = true)

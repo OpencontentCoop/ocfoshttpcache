@@ -33,12 +33,12 @@ class ResponseTagger
 
     public static function getCurrentInstanceIdentifier()
     {
-        $currentSiteAccess = \eZSiteAccess::current();
-        $siteAccessName = $currentSiteAccess['name'];
+        $identifier = 'example';
 
-        $parts = explode('_', $siteAccessName);
-
-        $identifier = array_shift($parts);
+        if (\eZINI::instance()->hasVariable('HTTPHeaderSettings', 'X-Instance')){
+            $identifierVar = \eZINI::instance()->variable('HTTPHeaderSettings', 'X-Instance');
+            $identifier = array_shift($identifierVar);
+        }
 
         $identifier = \ezpEvent::getInstance()->filter('ocfoshttpcache/instance_identifier', $identifier);
 

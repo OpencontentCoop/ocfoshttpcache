@@ -23,7 +23,10 @@ class CacheInvalidator
         (new Logger())->debug('Varnish servers: ' . implode(', ', $servers));
 
         $httpDispatcher = new HttpDispatcher($servers, $baseUri);
-        $client = new ProxyClient\Varnish($httpDispatcher);
+        $client = new ProxyClient\Varnish(
+            $httpDispatcher,
+            ['default_ban_headers' => ['X-Instance' => ResponseTagger::getCurrentInstanceIdentifier()]]
+        );
         $this->cacheInvalidator = new FosCacheInvalidator($client);
 
         $logListener = new LogListener(new Logger());
