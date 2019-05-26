@@ -28,6 +28,15 @@ usato da FosHttpCache](https://foshttpcache.readthedocs.io/en/latest/user-contex
 
 ## Configurazione
 
+Configurare l'endpont Varnish e la porta oppure gli ip in `site.ini`:
+``` 
+[VarnishSettings]
+VarnishHostName=varnish.example.com
+VarnishPort=80
+VarnishServers[]=10.0.0.1:1234
+VarnishServers[]=127.0.0.1:80
+```
+
 E' possibile configurare l'estensione perché utilizzi la `StaticCache` (configurazione di default) in `site.ini`:
 
 ```

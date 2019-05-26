@@ -15,4 +15,9 @@ Listeners[]=content/cache/all@Opencontent\FosHttpCache\CacheListener::onContentC
 Listeners[]=content/cache@Opencontent\FosHttpCache\CacheListener::onContentCache
 #Listeners[]=content/pre_rendering@Opencontent\FosHttpCache\CacheListener::onContentPreRendering
 
+[VarnishSettings]
+VarnishHostName=
+VarnishPort=
+VarnishServers[]
+
 */ ?>
