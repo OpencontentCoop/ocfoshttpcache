@@ -1,0 +1,22 @@
+{
+    "name": "opencontent/ocfoshttpcache-ls",
+    "description": "OpenContent FosHttpCache for eZPublish Legacy",
+    "type": "ezpublish-legacy-extension",
+    "authors": [        
+        {
+            "name": "OpenContent",
+            "homepage": "http://www.opencontent.it"
+        }
+    ],
+    "license": "GPL-2.0",    
+    "minimum-stability": "dev",
+    "require": {
+        "ezsystems/ezpublish-legacy-installer": "*",
+        "php-http/guzzle6-adapter": "*",
+        "friendsofsymfony/http-cache": "*",
+        "psr/log": "*"
+    },
+    "extra": {
+        "ezpublish-legacy-extension-name": "ocfoshttpcache"
+    }
+}
