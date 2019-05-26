@@ -31,6 +31,9 @@ class ResponseTagger
         return self::$instance->responseTagger;
     }
 
+    /**
+     * @return string
+     */
     public static function getCurrentInstanceIdentifier()
     {
         $identifier = 'example';

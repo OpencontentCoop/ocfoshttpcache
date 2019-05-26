@@ -33,6 +33,9 @@ class CacheInvalidator
         $this->cacheInvalidator->getEventDispatcher()->addSubscriber($logListener);
     }
 
+    /**
+     * @return array
+     */
     private function getVarnishServers()
     {
         $ini = \eZINI::instance('site.ini');
@@ -57,6 +60,8 @@ class CacheInvalidator
         if (empty($servers)) {
             $servers = $ini->variable('VarnishSettings', 'VarnishServers');
         }
+
+        $servers = \ezpEvent::getInstance()->filter('ocfoshttpcache/varnish_server', $servers);
 
         return $servers;
     }

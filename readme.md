@@ -36,6 +36,8 @@ VarnishPort=80
 VarnishServers[]=10.0.0.1:1234
 VarnishServers[]=127.0.0.1:80
 ```
+oppure usando un `[Event]Listeners[]=ocfoshttpcache/varnish_server@MyVarnishServerCallable`
+
 
 E' possibile configurare l'estensione perché utilizzi la `StaticCache` (configurazione di default) in `site.ini`:
 
