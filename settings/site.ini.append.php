@@ -13,7 +13,6 @@ Listeners[]=content/view@Opencontent\FosHttpCache\CacheListener::onContentView
 Listeners[]=response/output@Opencontent\FosHttpCache\CacheListener::onResponseOutput
 Listeners[]=content/cache/all@Opencontent\FosHttpCache\CacheListener::onContentCacheAll
 Listeners[]=content/cache@Opencontent\FosHttpCache\CacheListener::onContentCache
-#Listeners[]=content/pre_rendering@Opencontent\FosHttpCache\CacheListener::onContentPreRendering
 
 [VarnishSettings]
 VarnishHostName=

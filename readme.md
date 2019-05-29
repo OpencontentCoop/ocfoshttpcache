@@ -45,18 +45,7 @@ E' possibile configurare l'estensione perché utilizzi la `StaticCache` (configu
 [ContentSettings]
 StaticCache=enabled
 StaticCacheHandler=Opencontent\FosHttpCache\StaticCache
-``` 
- 
-Per siti che producono molta cache dei contenuti (`viewcache`), è possibile configurare l'estensione in modo
-che i file di cache dei contenuti **non** siano salvati nel filesystem (locale o nfs) inserendo in `site.ini`:
-
-```
-[Event]
-Listeners[]=content/pre_rendering@Opencontent\FosHttpCache\CacheListener::onContentPreRendering
- 
-```
-
-Con questa configurazione è possibile utilizzare i response tag per un controllo più accurato delle dinamiche di invalidamento  
+```  
 
 
 ## Invalidamento della cache di Varnish

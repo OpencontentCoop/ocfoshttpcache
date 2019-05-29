@@ -58,9 +58,6 @@ class CacheListener
 
     public static function onContentPreRendering(\eZContentObjectTreeNode $node, \eZTemplate $tpl, $viewMode)
     {
-        $tpl->setVariable('cache_ttl', 0);
-        \eZDebug::writeNotice("Force set cache_ttl 0", __METHOD__);
-
         $tagList = [
             'view-' . $viewMode,
             'object-' . $node->object()->attribute('id'),
