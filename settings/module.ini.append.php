@@ -4,5 +4,6 @@
 ExtensionRepositories[]=ocfoshttpcache
 
 ModuleList[]=_fos_user_context_hash
+ModuleList[]=varnish
 
 */ ?>

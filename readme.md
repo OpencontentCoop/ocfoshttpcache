@@ -70,9 +70,9 @@ L'accesso al modulo `_fos_user_context_hash` è garantito dal blocco in `site.in
 PolicyOmitList[]=_fos_user_context_hash 
 ```
 
-## Todo
+Per invalidare selettivamente la cache di Varnish è disponibile il modulo `varnish/dashboard`
 
-Per invalidare selettivamente la cache di Varnish è disponibile il modulo `varnish/main`
+## Todo
 
 Sono disponibili operatori di template per inserire tag custom 
 ```
