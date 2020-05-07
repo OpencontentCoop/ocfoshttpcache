@@ -9,12 +9,17 @@ class HashGenerator
 
     private $hashGenerator;
 
-    private function __construct()
+    private function __construct($includeUserIdProvider = false)
     {
-        $this->hashGenerator = new DefaultHashGenerator([
+        $providers = [
             new ContextProvider\IsAuthenticatedProvider(),
             new ContextProvider\RoleProvider(),
-        ]);
+        ];
+        if ($includeUserIdProvider){
+            $providers[] = new ContextProvider\UserIdProvider();
+        }
+
+        $this->hashGenerator = new DefaultHashGenerator($providers);
     }
 
     /**
@@ -23,7 +28,12 @@ class HashGenerator
     public static function instance()
     {
         if (self::$instance === null){
-            self::$instance = new HashGenerator();
+            $includeUserIdProvider = false;
+            if (\eZINI::instance()->hasVariable('UserContextHash', 'IncludeCurrentUserId')
+                && \eZINI::instance()->variable('UserContextHash', 'IncludeCurrentUserId') == 'enabled'){
+                $includeUserIdProvider = true;
+            }
+            self::$instance = new HashGenerator($includeUserIdProvider);
         }
 
         return self::$instance->hashGenerator;

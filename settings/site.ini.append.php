@@ -19,4 +19,7 @@ VarnishHostName=
 VarnishPort=
 VarnishServers[]
 
+[UserContextHash]
+#IncludeCurrentUserId=enabled
+
 */ ?>
