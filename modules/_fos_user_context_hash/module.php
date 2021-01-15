@@ -9,4 +9,6 @@ $Module = array(
     )
 );
 
+$ViewList = array();
+
 
