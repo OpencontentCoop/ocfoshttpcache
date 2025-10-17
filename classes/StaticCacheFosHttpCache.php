@@ -2,6 +2,7 @@
 
 namespace Opencontent\FosHttpCache;
 
+use eZContentCache;
 use eZINI;
 use FOS\HttpCache\ProxyClient\Varnish;
 
@@ -28,10 +29,7 @@ class StaticCache implements \ezpStaticCache
             && $ini->variable('CacheSettings', 'EnableRefresh') == 'enabled';
 
         $siteIni = eZINI::instance();
-        $this->cacheThreshold = min(
-            (int)$siteIni->variable('ContentSettings', 'CacheThreshold'),
-            (int)$siteIni->variable('ContentSettings', 'StaticCacheThreshold')
-        );
+        $this->cacheThreshold = (int)$siteIni->variable('ContentSettings', 'StaticCacheThreshold');
     }
 
     private function inCleanupThresholdRange($value): bool
@@ -56,10 +54,15 @@ class StaticCache implements \ezpStaticCache
     public function generateNodeListCache($nodeList)
     {
         if (!empty($nodeList)) {
-            $cleanupValue = \eZContentCache::calculateCleanupValue(count($nodeList));
-            $doClearNodeList = $this->inCleanupThresholdRange($cleanupValue);
+            $cleanupValue = eZContentCache::calculateCleanupValue(count($nodeList));
+            $doClearNodeList = eZContentCache::inCleanupThresholdRange($cleanupValue);
             if ($doClearNodeList) {
-
+                if (!$this->inCleanupThresholdRange($cleanupValue)){
+                    (new Logger())->info(
+                        "Clear only first content since list of nodes({$cleanupValue}) exceeds StaticCacheThreshold limit ($this->cacheThreshold)"
+                    );
+                    $nodeList = [$nodeList[0]];
+                }
                 $tagList = array_map(function ($nodeId) {
                     return "node-{$nodeId}";
                 }, $nodeList);
@@ -69,8 +72,9 @@ class StaticCache implements \ezpStaticCache
 
             } else {
                 (new Logger())->info(
-                    "Expiring all view cache since list of nodes({$cleanupValue}) exceeds {$this->cacheThreshold}"
+                    "Expiring all view cache since list of nodes({$cleanupValue}) exceeds CacheThreshold limit"
                 );
+
                 $this->generateCache(true);
             }
         }
