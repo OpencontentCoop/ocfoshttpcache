@@ -2,6 +2,7 @@
 
 namespace Opencontent\FosHttpCache;
 
+use eZINI;
 use FOS\HttpCache\ProxyClient\Varnish;
 
 class StaticCache implements \ezpStaticCache
@@ -17,12 +18,25 @@ class StaticCache implements \ezpStaticCache
 
     private $alwaysUpdatedCacheRegistered = [];
 
+    private $cacheThreshold = 250;
+
     public function __construct()
     {
-        $ini = \eZINI::instance('staticcache.ini');
+        $ini = eZINI::instance('staticcache.ini');
         $this->alwaysUpdate = $ini->variable('CacheSettings', 'AlwaysUpdateArray');
         $this->enableRefresh = $ini->hasVariable('CacheSettings', 'EnableRefresh')
             && $ini->variable('CacheSettings', 'EnableRefresh') == 'enabled';
+
+        $siteIni = eZINI::instance();
+        $this->cacheThreshold = min(
+            (int)$siteIni->variable('ContentSettings', 'CacheThreshold'),
+            (int)$siteIni->variable('ContentSettings', 'StaticCacheThreshold')
+        );
+    }
+
+    private function inCleanupThresholdRange($value): bool
+    {
+        return ($value < $this->cacheThreshold);
     }
 
     public function generateAlwaysUpdatedCache($quiet = false, $cli = false, $delay = true)
@@ -43,7 +57,7 @@ class StaticCache implements \ezpStaticCache
     {
         if (!empty($nodeList)) {
             $cleanupValue = \eZContentCache::calculateCleanupValue(count($nodeList));
-            $doClearNodeList = \eZContentCache::inCleanupThresholdRange($cleanupValue);
+            $doClearNodeList = $this->inCleanupThresholdRange($cleanupValue);
             if ($doClearNodeList) {
 
                 $tagList = array_map(function ($nodeId) {
@@ -54,6 +68,9 @@ class StaticCache implements \ezpStaticCache
                 CacheInvalidator::instance()->invalidateTags($tagList);
 
             } else {
+                (new Logger())->info(
+                    "Expiring all view cache since list of nodes({$cleanupValue}) exceeds {$this->cacheThreshold}"
+                );
                 $this->generateCache(true);
             }
         }

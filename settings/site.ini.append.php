@@ -6,6 +6,7 @@ PolicyOmitList[]=_fos_user_context_hash
 [ContentSettings]
 StaticCache=enabled
 StaticCacheHandler=Opencontent\FosHttpCache\StaticCache
+StaticCacheThreshold=250
 
 [Event]
 Listeners[]=request/preinput@Opencontent\FosHttpCache\CacheListener::onRequestPreinput
