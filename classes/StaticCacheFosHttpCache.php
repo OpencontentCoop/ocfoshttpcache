@@ -89,9 +89,11 @@ class StaticCache implements \ezpStaticCache
 
     public function cacheURL($url, $nodeID = false, $skipExisting = false, $delay = true)
     {
+        // @phpstan-ignore return.missing
         if ($this->enableRefresh && !isset($this->alwaysUpdatedCacheRegistered[$url])) {
             (new Logger())->info('Refresh path ' . $url);
             CacheInvalidator::instance()->refreshPath($url);
+            // @phpstan-ignore return.missing
             if (in_array($url, $this->alwaysUpdate)) {
                 $this->alwaysUpdatedCacheRegistered[$url] = true;
             }
